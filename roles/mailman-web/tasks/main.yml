@@ -1,0 +1,57 @@
+---
+
+- name: Install nginx
+  pkgng:
+    name:
+      - nginx
+      - uwsgi-py36
+
+- name: Enable uwsgi start
+  copy:
+    content: |
+      # Ansible managed
+      uwsgi_enable="YES"
+      uwsgi_socket="{{ uwsgi_socket_path }}"
+    dest: /etc/rc.conf.d/uwsgi
+
+- name: Enable nginx start
+  copy:
+    content: |
+      # Ansible managed
+      nginx_enable="YES"
+    dest: /etc/rc.conf.d/nginx
+
+# - name: Copy nginx config
+#   copy: TODO
+#   notify: reload nginx
+#   /usr/local/sbin/nginx -q -t -c /usr/local/etc/nginx/nginx.conf
+
+
+- name: Create directory for venv
+  file:
+    path: /usr/local/mailman-web
+    state: directory
+    owner: uwsgi
+    group: uwsgi
+    mode: '0755'
+
+- name: Put requirements.txt
+  copy:
+    src: requirements.txt
+    dest: /usr/local/mailman-web/requirements.txt
+
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+    virtualenv: /usr/local/mailman-web
+    virtualenv_command: /usr/local/bin/python3 -m venv
+#   become to non root users is currently broken
+#   become: yes
+#   become_user: mailman
+
+- name: Install Postorius and Hyperkitty
+  pip:
+    requirements: /usr/local/mailman-web/requirements.txt
+    virtualenv: /usr/local/mailman-web
+    virtualenv_command: /usr/local/bin/python3 -m venv

@@ -1,0 +1,15 @@
+TODO: add Django setup to Ansible role
+
+script /var/tmp/migrate.log ./manage.py migrate --no-color --no-input
+
+./manage.py collectstatic --no-color --no-input
+./manage.py compress --no-color
+
+
+./manage.py shell -c "from django.contrib.sites.models import Site; r = Site.objects.filter(domain='example.com').update(domain='lists.foobar.com', name='lists.foobar.com'); print(r)"
+
+Will print:
+1 - updated
+0 - not updated
+
+./manage.py createsuperuser --username root --email me@example.org --no-input

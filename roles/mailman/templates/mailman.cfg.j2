@@ -1,0 +1,42 @@
+# {{ ansible_managed }}
+#
+# This is your GNU Mailman 3 configuration file.  You can edit this file to
+# configure Mailman to your needs, and Mailman will never overwrite it.
+# Additional configuration information is available here:
+#
+# http://mailman.readthedocs.io/en/latest/src/mailman/config/docs/config.html
+#
+# For example, uncomment the following lines to run Mailman in developer mode.
+#
+# [devmode]
+# enabled: yes
+# recipient: your.address@your.domain
+[mailman]
+site_owner: {{ mailman_site_owner }}
+
+# Which paths.* file system layout to use.
+layout: home
+
+[mta]
+lmtp_host: 127.0.0.1
+lmtp_port: 8024
+
+smtp_host: {{ smtp_host }}
+smtp_port: {{ smtp_port }}
+
+remove_dkim_headers: yes
+
+verp_confirmations: yes
+verp_personalized_deliveries: yes
+
+[paths.home]
+# config in /usr/local/etc
+etc_dir: /usr/local/etc/mailman
+# logs in /var/log
+log_dir: /var/log/mailman
+# anything else in /usr/local/mailman
+var_dir: /usr/local/mailman
+
+[webservice]
+admin_user: {{ mailman_rest_user }}
+admin_pass: {{ mailman_rest_password }}

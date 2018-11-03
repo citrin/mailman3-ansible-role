@@ -1,0 +1,2 @@
+---
+uwsgi_socket_path: /tmp/uwsgi.sock

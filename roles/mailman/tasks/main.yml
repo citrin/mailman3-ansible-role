@@ -1,0 +1,33 @@
+---
+- name: Install mailman; XXX wait for https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=225543
+  pkgng:
+    name:
+      - py36-mailman
+      - sassc # used by hyperkitty
+
+- name: Create mailman log directory
+  file:
+    path: /var/log/mailman
+    state: directory
+    owner: mailman
+    group: mailman
+    mode: '0755'
+
+- name: Enable mailman start
+  copy:
+    content: |
+      # Ansible managed
+      mailman_config="/usr/local/etc/mailman/mailman.cfg"
+      mailman_enable="YES"
+    dest: /etc/rc.conf.d/mailman
+
+- name: Create mailman config directory
+  file: path=/usr/local/etc/mailman state=directory
+
+- name: Mailman config file
+  template:
+    src: mailman.cfg.j2
+    dest: /usr/local/etc/mailman/mailman.cfg
+    mode: 0640
+    group: mailman
+  notify: restart mailman
